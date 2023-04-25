@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:popsicle_sales_manager_client/models/sale_model.dart';
 import 'package:popsicle_sales_manager_client/providers/history_provider.dart';
@@ -11,7 +14,9 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     List<SaleModel> salesHistory =
         context.watch<HistoryProvider>().salesHistory;
-    int amount = context.watch<SettingsProvider>().totalAmount;
+    int? totalAmount = context.watch<SettingsProvider>().totalAmount;
+    double? profitValue = context.watch<SettingsProvider>().iceCreamShopProfit;
+    double? sellersProfit = context.watch<SettingsProvider>().sellersProfit;
 
     return Scaffold(
         appBar: AppBar(
@@ -23,18 +28,53 @@ class HistoryPage extends StatelessWidget {
               itemCount: salesHistory.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  onTap: () {
-                    context.read<HistoryProvider>().removeSale(index);
-                    context.read<HistoryProvider>().calculateTotalBalance();
-                    context
-                        .read<HistoryProvider>()
-                        .calculateTotalBalanceMoney();
-                    context.read<HistoryProvider>().calculateTotalDiscount();
-                    context.read<HistoryProvider>().calculateTotalPixBalance();
-                    context.read<HistoryProvider>().calculateTotalAmount();
-                    context
-                        .read<HistoryProvider>()
-                        .calculateRemaingAmount(amount);
+                  onTap: () async {
+                    ArtDialogResponse response = await ArtSweetAlert.show(
+                        context: context,
+                        artDialogArgs: ArtDialogArgs(
+                            showCancelBtn: true,
+                            title: 'Excluir Venda',
+                            text: 'Excluir venda do histórico?',
+                            cancelButtonText: 'Excluir',
+                            cancelButtonColor: Colors.green.shade700,
+                            confirmButtonText: 'Cancelar',
+                            confirmButtonColor: Colors.pink.shade400,
+                            type: ArtSweetAlertType.question));
+                    if (response.isTapConfirmButton) return;
+                    if (response.isTapCancelButton) {
+                      context.read<HistoryProvider>().removeSale(index);
+                      context.read<HistoryProvider>().calculateTotalBalance();
+                      context
+                          .read<HistoryProvider>()
+                          .calculateTotalBalanceMoney();
+                      context.read<HistoryProvider>().calculateTotalDiscount();
+                      context
+                          .read<HistoryProvider>()
+                          .calculateTotalPixBalance();
+                      context.read<HistoryProvider>().calculateTotalAmount();
+                      context
+                          .read<HistoryProvider>()
+                          .calculateRemaingAmount(totalAmount!);
+                      context
+                          .read<HistoryProvider>()
+                          .calculateIceCreamShopProfit(profitValue);
+                      context
+                          .read<HistoryProvider>()
+                          .calculateSellerProfit(sellersProfit);
+                      context.read<HistoryProvider>().calculateNetBalance();
+                      context
+                          .read<HistoryProvider>()
+                          .calculatePerformancePercentage(totalAmount);
+                      ArtSweetAlert.show(
+                          context: context,
+                          artDialogArgs: ArtDialogArgs(
+                              title: 'Excluir Venda',
+                              text: 'Venda excluída com sucesso!',
+                              confirmButtonText: 'Concluir',
+                              confirmButtonColor: Colors.green.shade700,
+                              type: ArtSweetAlertType.success));
+                      return;
+                    }
                   },
                   minLeadingWidth: 20,
                   leading: SizedBox(

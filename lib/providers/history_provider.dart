@@ -25,6 +25,18 @@ class HistoryProvider with ChangeNotifier {
   int _remainingAmount = 0;
   int get remainingAmount => _remainingAmount;
 
+  double? _iceCreamShopProfit = 0.0;
+  double? get iceCreamShopProfit => _iceCreamShopProfit;
+
+  double? _sellersProfit = 0.0;
+  double? get sellersProfit => _sellersProfit;
+
+  double _netBalance = 0.0;
+  double get netBalance => _netBalance;
+
+  double _performancePercentage = 0.0;
+  double get performancePercentage => _performancePercentage;
+
   void addNewSale(
       String paymentMethod, int amount, double discount, double totalBalance) {
     SaleModel newSale =
@@ -81,14 +93,45 @@ class HistoryProvider with ChangeNotifier {
       _salesHistory.forEach((element) {
         _totalAmount += element.amount;
       });
+    } else {
+      _totalAmount = 0;
     }
     notifyListeners();
   }
 
-  void calculateRemaingAmount(int totalAmount) {
-    if (_totalAmount > 0) {
-      _remainingAmount = totalAmount - _totalAmount;
-    }
+  void calculateRemaingAmount(int? totalAmount) {
+    _remainingAmount = 0;
+    _totalAmount > 0
+        ? _remainingAmount = totalAmount! - _totalAmount
+        : _remainingAmount = totalAmount!;
+    notifyListeners();
+  }
+
+  void calculateIceCreamShopProfit(double? profitValue) {
+    _totalAmount > 0
+        ? _iceCreamShopProfit = profitValue! * _totalAmount
+        : _iceCreamShopProfit = 0.0;
+    notifyListeners();
+  }
+
+  void calculateSellerProfit(double? profitValue) {
+    _totalAmount > 0
+        ? _sellersProfit = profitValue! * _totalAmount
+        : _sellersProfit = 0.0;
+    notifyListeners();
+  }
+
+  void calculateNetBalance() {
+    _totalDiscount > 0
+        ? _netBalance = _totalBalance - _totalDiscount
+        : _netBalance = _totalBalance;
+    notifyListeners();
+  }
+
+  void calculatePerformancePercentage(int? totalAmount) {
+    _totalAmount > 0
+        ? _performancePercentage = (_totalAmount / totalAmount!) * 100
+        : _performancePercentage = 0.0;
     notifyListeners();
   }
 }

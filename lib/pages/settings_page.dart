@@ -1,7 +1,6 @@
 // ignore_for_file: unnecessary_string_interpolations
 
 import 'package:flutter/material.dart';
-import 'package:popsicle_sales_manager_client/providers/dashboard_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +16,16 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double? salePrice = context.watch<SettingsProvider>().salePrice;
+    double? iceCreamShopProfit =
+        context.watch<SettingsProvider>().iceCreamShopProfit;
+    double? sellersProfit = context.watch<SettingsProvider>().sellersProfit;
+    int? totalAmount = context.watch<SettingsProvider>().totalAmount;
+    context.read<SettingsProvider>().fetchSalePrice();
+    context.read<SettingsProvider>().fetchIceCreamShopProfit();
+    context.read<SettingsProvider>().fetchSellersProfit();
+    context.read<SettingsProvider>().fetchTotalAmount();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -44,8 +53,10 @@ class SettingsPage extends StatelessWidget {
                   child: TextField(
                     controller: salePriceController,
                     keyboardType: TextInputType.number,
-                    onChanged: (value) =>
-                        context.read<SettingsProvider>().changeSalePrice(value),
+                    onChanged: (value) => {
+                      context.read<SettingsProvider>().changeSalePrice(value),
+                      context.read<SettingsProvider>().fetchSalePrice(),
+                    },
                     decoration: const InputDecoration(
                         filled: true,
                         isDense: true,
@@ -61,7 +72,7 @@ class SettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                      'R\$ ${context.watch<SettingsProvider>().salePrice.toStringAsFixed(2).replaceAll('.', ',')}',
+                      'R\$ ${salePrice?.toStringAsFixed(2).replaceAll('.', ',')}',
                       style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
@@ -88,9 +99,7 @@ class SettingsPage extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       context.read<SettingsProvider>().changeTotalAmount(value);
-                      context
-                          .read<DashboardProvider>()
-                          .calculateRemainingPopsicles(int.parse(value));
+                      context.read<SettingsProvider>().fetchTotalAmount();
                     },
                     decoration: const InputDecoration(
                         filled: true,
@@ -106,8 +115,7 @@ class SettingsPage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                      'Qtd. ${context.watch<SettingsProvider>().totalAmount}',
+                  child: Text('Qtd. ${totalAmount}',
                       style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
@@ -136,6 +144,9 @@ class SettingsPage extends StatelessWidget {
                       context
                           .read<SettingsProvider>()
                           .changeIceCreamShopProfit(value);
+                      context
+                          .read<SettingsProvider>()
+                          .fetchIceCreamShopProfit();
                     },
                     decoration: const InputDecoration(
                         filled: true,
@@ -152,7 +163,7 @@ class SettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                      'R\$ ${context.watch<SettingsProvider>().iceCreamShopProfit.toStringAsFixed(2).replaceAll('.', ',')}',
+                      'R\$ ${iceCreamShopProfit?.toStringAsFixed(2).replaceAll('.', ',')}',
                       style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,
@@ -181,6 +192,7 @@ class SettingsPage extends StatelessWidget {
                       context
                           .read<SettingsProvider>()
                           .changeSellersProfit(value);
+                      context.read<SettingsProvider>().fetchSellersProfit();
                     },
                     decoration: const InputDecoration(
                         filled: true,
@@ -197,7 +209,7 @@ class SettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                      'R\$ ${context.watch<SettingsProvider>().sellersProfit.toStringAsFixed(2).replaceAll('.', ',')}',
+                      'R\$ ${sellersProfit?.toStringAsFixed(2).replaceAll('.', ',')}',
                       style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w500,

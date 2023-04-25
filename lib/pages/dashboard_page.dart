@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:d_chart/d_chart.dart';
-import 'package:popsicle_sales_manager_client/providers/balance_provider.dart';
-import 'package:popsicle_sales_manager_client/providers/dashboard_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/history_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/settings_provider.dart';
 import 'package:popsicle_sales_manager_client/widgets/new_sale_widget.dart';
@@ -25,10 +23,12 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double moneyBalance = context.watch<BalanceProvider>().balanceMoney;
-    double pixBalance = context.watch<BalanceProvider>().pixBalance;
-    double totalBalance = context.watch<BalanceProvider>().totalBalance;
-    double discountBalance = context.watch<BalanceProvider>().discountBalance;
+    double moneyBalance = context.watch<HistoryProvider>().totalBalanceMoney;
+    double pixBalance = context.watch<HistoryProvider>().totalPixBalance;
+    double totalBalance = context.watch<HistoryProvider>().totalBalance;
+    double discountBalance = context.watch<HistoryProvider>().totalDiscount;
+    int? totalAmount = context.watch<SettingsProvider>().totalAmount;
+    double? salePrice = context.watch<SettingsProvider>().salePrice;
 
     return Scaffold(
       appBar: AppBar(
@@ -65,26 +65,10 @@ class DashboardPage extends StatelessWidget {
                         discountBalance > 0,
                     child: DChartPie(
                       data: [
-                        {
-                          'domain': 'Dinheiro',
-                          'measure':
-                              context.watch<HistoryProvider>().totalBalanceMoney
-                        },
-                        {
-                          'domain': 'Pix',
-                          'measure':
-                              context.watch<HistoryProvider>().totalPixBalance
-                        },
-                        {
-                          'domain': 'Total',
-                          'measure':
-                              context.watch<HistoryProvider>().totalBalance
-                        },
-                        {
-                          'domain': 'Desconto',
-                          'measure':
-                              context.watch<HistoryProvider>().totalDiscount
-                        },
+                        {'domain': 'Dinheiro', 'measure': moneyBalance},
+                        {'domain': 'Pix', 'measure': pixBalance},
+                        {'domain': 'Total', 'measure': totalBalance},
+                        {'domain': 'Desconto', 'measure': discountBalance},
                       ],
                       pieLabel: (pieData, index) => index == 0
                           ? "R\$\n${pieData['measure']}"
@@ -124,17 +108,10 @@ class DashboardPage extends StatelessWidget {
                         {
                           'id': 'bar',
                           'data': [
-                            {
-                              'domain': 'Qtd. Total',
-                              'measure':
-                                  context.watch<SettingsProvider>().totalAmount
-                            },
+                            {'domain': 'Qtd. Total', 'measure': totalAmount},
                             {
                               'domain': 'R\$ Total',
-                              'measure': context
-                                      .watch<SettingsProvider>()
-                                      .salePrice *
-                                  context.watch<SettingsProvider>().totalAmount
+                              'measure': salePrice! * totalAmount!
                             },
                           ]
                         }
@@ -225,7 +202,7 @@ class DashboardPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                          'R\$ ${context.watch<DashboardProvider>().iceCreamShopProfit.toStringAsFixed(2).replaceAll('.', ',')}',
+                          'R\$ ${context.watch<HistoryProvider>().iceCreamShopProfit?.toStringAsFixed(2).replaceAll('.', ',')}',
                           style: const TextStyle(
                               fontFamily: 'Montserrat',
                               color: Colors.black45,
@@ -248,7 +225,7 @@ class DashboardPage extends StatelessWidget {
                         height: 4.0,
                       ),
                       Text(
-                        'R\$ ${context.watch<DashboardProvider>().sellersProfit.toStringAsFixed(2).replaceAll('.', ',')}',
+                        'R\$ ${context.watch<HistoryProvider>().sellersProfit?.toStringAsFixed(2).replaceAll('.', ',')}',
                         style: const TextStyle(
                             fontFamily: 'Montserrat',
                             color: Colors.black45,
@@ -335,7 +312,7 @@ class DashboardPage extends StatelessWidget {
                           color: Colors.black54,
                           fontWeight: FontWeight.w600)),
                   trailing: Text(
-                      '${context.watch<DashboardProvider>().performancePercentage.toStringAsFixed(2)} %',
+                      '${context.watch<HistoryProvider>().performancePercentage.toStringAsFixed(2)} %',
                       style: const TextStyle(
                           fontFamily: 'Montserrat',
                           color: Colors.black54,
@@ -349,7 +326,7 @@ class DashboardPage extends StatelessWidget {
                       radius: const BorderRadius.all(Radius.circular(30)),
                       forgroundColor: Colors.indigo,
                       value: context
-                          .watch<DashboardProvider>()
+                          .watch<HistoryProvider>()
                           .performancePercentage,
                       max: 100),
                 ),
@@ -367,14 +344,14 @@ class DashboardPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                            '- R\$ ${context.watch<BalanceProvider>().discountBalance.toStringAsFixed(2).replaceAll('.', ',')}',
+                            '- R\$ ${context.watch<HistoryProvider>().totalDiscount.toStringAsFixed(2).replaceAll('.', ',')}',
                             style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 13.0,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red.shade500)),
                         Text(
-                            'R\$ ${context.watch<BalanceProvider>().netBalance.toStringAsFixed(2).replaceAll('.', ',')}',
+                            'R\$ ${context.watch<HistoryProvider>().netBalance.toStringAsFixed(2).replaceAll('.', ',')}',
                             style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 22.0,

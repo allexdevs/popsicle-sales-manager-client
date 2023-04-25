@@ -6,17 +6,16 @@ import 'package:popsicle_sales_manager_client/pages/history_page.dart';
 import 'package:popsicle_sales_manager_client/pages/qrcode_page.dart';
 import 'package:popsicle_sales_manager_client/pages/settings_page.dart';
 import 'package:popsicle_sales_manager_client/providers/balance_provider.dart';
-import 'package:popsicle_sales_manager_client/providers/dashboard_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/history_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/new_sale_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => NewSaleProvider()),
-      ChangeNotifierProvider(create: (_) => DashboardProvider()),
       ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ChangeNotifierProvider(create: (_) => BalanceProvider()),
       ChangeNotifierProvider(create: (_) => HistoryProvider()),

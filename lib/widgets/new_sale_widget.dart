@@ -1,8 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:popsicle_sales_manager_client/providers/balance_provider.dart';
-import 'package:popsicle_sales_manager_client/providers/dashboard_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/history_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/settings_provider.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +19,10 @@ class NewSaleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     int popsiclesSold = context.watch<NewSaleProvider>().amount;
     double saleBalance = context.watch<NewSaleProvider>().totalBalance;
-    int totalAmount = context.watch<SettingsProvider>().totalAmount;
-    double iceCreamShopProfit =
+    int? totalAmount = context.watch<SettingsProvider>().totalAmount;
+    double? iceCreamShopProfit =
         context.watch<SettingsProvider>().iceCreamShopProfit;
-    double sellersProfit = context.watch<SettingsProvider>().sellersProfit;
-    int sold = context.watch<DashboardProvider>().popsiclesSold;
+    double? sellersProfit = context.watch<SettingsProvider>().sellersProfit;
     String paymentMethod = context.watch<NewSaleProvider>().paymentMethod;
     double discount = context.watch<NewSaleProvider>().discount;
 
@@ -163,33 +160,6 @@ class NewSaleWidget extends StatelessWidget {
                           (states) => Colors.pink.shade400)),
                   onPressed: () {
                     if (popsiclesSold > 0) {
-                      context
-                          .read<DashboardProvider>()
-                          .calculatePopsiclesSold(popsiclesSold);
-                      context
-                          .read<DashboardProvider>()
-                          .calculateRemainingPopsicles(totalAmount);
-                      context
-                          .read<DashboardProvider>()
-                          .calculateIceCreamShopProfit(iceCreamShopProfit);
-                      context
-                          .read<DashboardProvider>()
-                          .calculateSellersProfit(sellersProfit);
-                      context
-                          .read<DashboardProvider>()
-                          .calculatePerformancePercentage(
-                              (sold + popsiclesSold), totalAmount);
-                      context
-                          .read<BalanceProvider>()
-                          .calculateBalancePix(paymentMethod, saleBalance);
-                      context
-                          .read<BalanceProvider>()
-                          .calculateBalanceMoney(paymentMethod, saleBalance);
-                      context
-                          .read<BalanceProvider>()
-                          .calculateDiscountBalance(discount);
-                      context.read<BalanceProvider>().calculateTotalBalance();
-                      context.read<BalanceProvider>().calculateNetBalance();
                       context.read<NewSaleProvider>().clearAmount();
                       context.read<NewSaleProvider>().clearDiscount();
                       context.read<NewSaleProvider>().clearTotalBalance();
@@ -209,6 +179,16 @@ class NewSaleWidget extends StatelessWidget {
                       context
                           .read<HistoryProvider>()
                           .calculateTotalBalanceMoney();
+                      context
+                          .read<HistoryProvider>()
+                          .calculateIceCreamShopProfit(iceCreamShopProfit);
+                      context
+                          .read<HistoryProvider>()
+                          .calculateSellerProfit(sellersProfit);
+                      context.read<HistoryProvider>().calculateNetBalance();
+                      context
+                          .read<HistoryProvider>()
+                          .calculatePerformancePercentage(totalAmount);
                       Navigator.pop(context);
                     }
                   },

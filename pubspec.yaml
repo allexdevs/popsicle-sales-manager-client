@@ -12,6 +12,8 @@ dependencies:
   provider: ^6.0.5
   select_form_field: ^2.2.0
   d_chart: ^2.2.11
+  shared_preferences: ^2.1.0
+  art_sweetalert: ^0.0.5
 
 dev_dependencies:
   flutter_test:
