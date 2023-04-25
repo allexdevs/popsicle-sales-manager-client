@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.popsicle_sales_manager_client">
    <application
-        android:label="popsicle_sales_manager_client"
+        android:label="Popsicle Sales Manager Client"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

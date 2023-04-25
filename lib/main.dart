@@ -5,7 +5,6 @@ import 'package:popsicle_sales_manager_client/pages/dashboard_page.dart';
 import 'package:popsicle_sales_manager_client/pages/history_page.dart';
 import 'package:popsicle_sales_manager_client/pages/qrcode_page.dart';
 import 'package:popsicle_sales_manager_client/pages/settings_page.dart';
-import 'package:popsicle_sales_manager_client/providers/balance_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/history_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/new_sale_provider.dart';
 import 'package:popsicle_sales_manager_client/providers/settings_provider.dart';
@@ -17,7 +16,6 @@ void main() {
     providers: [
       ChangeNotifierProvider(create: (_) => NewSaleProvider()),
       ChangeNotifierProvider(create: (_) => SettingsProvider()),
-      ChangeNotifierProvider(create: (_) => BalanceProvider()),
       ChangeNotifierProvider(create: (_) => HistoryProvider()),
     ],
     child: const MainApp(),
